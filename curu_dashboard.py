@@ -64,8 +64,8 @@ def load_data(site):
         return reviews, summary_df
     
     elif site == "Chemist Warehouse":
-        reviews_file = "cw_reviews_sentiment1.json"
-        csv_file = "cw_product_vader_scores1.csv"
+        reviews_file = "cw_skin_care_reviews_vader.json"
+        csv_file = "cw_skin_care_reviews_vader.csv"
 
         with open(reviews_file, "r", encoding="utf-8") as f:
             raw = json.load(f)
