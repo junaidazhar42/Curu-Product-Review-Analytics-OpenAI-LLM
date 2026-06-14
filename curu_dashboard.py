@@ -1,9 +1,8 @@
 import streamlit as st 
 import pandas as pd
 import json
-from langchain_community.chat_models import ChatOpenAI
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import PromptTemplate
 import os
 import re
 from dotenv import load_dotenv
@@ -19,7 +18,7 @@ load_dotenv()
 @st.cache_data
 def load_data(site):
     if site == "Amazon":
-        reviews_file = "amazon_search_results_1.json"   # after sentiment
+        reviews_file = "amazon_skin_care_reviews.json"   # after sentiment
         csv_file = "product_vader_scores.csv"
         with open(reviews_file, "r", encoding="utf-8") as f:
             reviews = json.load(f)
@@ -222,100 +221,11 @@ fig.update_layout(
 )
 st.plotly_chart(fig, use_container_width=True)
 
-# # -------------------------------
-# # LLM Insights (Skin Segmentation Focus)
-# # -------------------------------
-# review_analysis_prompt = PromptTemplate(
-#     input_variables=["reviews"],
-#     template="""
-#     You are an expert skincare analyst evaluating customer reviews.
-
-#     Analyze the following customer reviews (mix of positive and negative) and provide a structured analysis segmented by **skin type**, **sensitivity**, and **skin concerns**.
-
-#     ---  
-#     ### Skin Profile Segmentation
-#     **Skin Types:**
-#     - Dry  
-#     - Oily  
-#     - Combination  
-#     - Normal  
-
-#     **Sensitivity:**
-#     - Sensitive  
-#     - Not Sensitive  
-
-#     **Skin Concerns:**
-#     - Acne  
-#     - Pigmentation & Scarring  
-#     - Ageing  
-#     - Blackheads  
-#     - Large pores  
-#     - Dullness  
-#     - Redness  
-#     - Eczema, Psoriasis, Rosacea  
-#     - Dark circles  
-#     - Uneven texture  
-#     ---  
-
-#     Using this segmentation, perform the following:
-
-#     1. Identify the **top 5 positive insights** customers appreciated — grouped by relevant skin type, sensitivity, or concern.
-#     2. Identify the **top 5 negative insights** customers complained about — grouped similarly.
-#     3. Extract up to **10 important keywords or ingredients** mentioned in reviews, including:
-#        - Number of **positive mentions**
-#        - Number of **negative mentions**
-#        - The most relevant **skin profile segment(s)**
-
-#     Reviews:
-#     {reviews}
-
-#     Output Format (Markdown):
-
-#     ### 🟩 Positive Insights (by Skin Profile)
-#     - **Dry Skin:** ...
-#     - **Oily Skin:** ...
-#     - **Sensitive Skin:** ...
-#     - **Acne-Prone Skin:** ...
-#     - ...
-
-#     ### 🟥 Negative Insights (by Skin Profile)
-#     - **Dry Skin:** ...
-#     - **Oily Skin:** ...
-#     - **Sensitive Skin:** ...
-#     - **Acne-Prone Skin:** ...
-#     - ...
-
-#     ### 🔑 Top Keywords and Mentions
-#     - keyword1: X positive mentions, Y negative mentions — relevant for {{skin profile(s)}}
-#     - keyword2: ...
-#     """
-# )
-
-# llm = ChatOpenAI(temperature=0.5, model="gpt-3.5-turbo")
-# chain = LLMChain(llm=llm, prompt=review_analysis_prompt)
-
-# with st.spinner("Analyzing reviews by skin profile segmentation..."):
-#     response = chain.run({"reviews": " ".join(bal_reviews)})
-
-# st.subheader("📈 Review Analysis Summary")
-
-# positive_section = re.search(r"### 🟩 Positive Insights.*?\n(.*?)\n###", response, re.DOTALL)
-# negative_section = re.search(r"### 🟥 Negative Insights.*?\n(.*?)\n###", response, re.DOTALL)
-# keywords_section = re.search(r"### 🔑 Top Keywords.*?\n(.*)", response, re.DOTALL)
-
-# st.subheader("✨ Positive Insights (by Skin Profile)")
-# st.success(positive_section.group(1).strip() if positive_section else "Not found.")
-
-# st.subheader("⚠️ Negative Insights (by Skin Profile)")
-# st.error(negative_section.group(1).strip() if negative_section else "Not found.")
-
-# st.subheader("🔑 Top Keywords (by Skin Profile)")
-# st.markdown(keywords_section.group(1).strip() if keywords_section else "Not found.")
 # -------------------------------
 # LLM Insights
 # -------------------------------
 
-# === 1️⃣ Existing Overall Prompt ===
+# === 1️⃣ General Insights Prompt ===
 review_analysis_prompt = PromptTemplate(
     input_variables=["reviews"],
     template="""
@@ -349,7 +259,7 @@ review_analysis_prompt = PromptTemplate(
     """
 )
 
-# === 2️⃣ NEW Skin-Segmented Prompt ===
+# === 2️⃣ Skin-Segmented Prompt ===
 skin_segmentation_prompt = PromptTemplate(
     input_variables=["reviews"],
     template="""
@@ -382,7 +292,6 @@ skin_segmentation_prompt = PromptTemplate(
 
     Analyze the reviews below and:
     1. Group feedback by **skin profile segment** (skin type, sensitivity, and concern).  
-      
 
     Reviews:
     {reviews}
@@ -409,17 +318,17 @@ skin_segmentation_prompt = PromptTemplate(
     """
 )
 
-# === 3️⃣ Run both LLM analyses ===
+# === 3️⃣ Run both LLM analyses using LCEL pipe syntax ===
 llm = ChatOpenAI(temperature=0.5, model="gpt-3.5-turbo")
 
-chain_general = LLMChain(llm=llm, prompt=review_analysis_prompt)
-chain_skin = LLMChain(llm=llm, prompt=skin_segmentation_prompt)
+chain_general = review_analysis_prompt | llm
+chain_skin = skin_segmentation_prompt | llm
 
 with st.spinner("Analyzing reviews (general insights)..."):
-    response_general = chain_general.run({"reviews": " ".join(bal_reviews)})
+    response_general = chain_general.invoke({"reviews": " ".join(bal_reviews)}).content
 
 with st.spinner("Analyzing reviews (skin profile segmentation)..."):
-    response_skin = chain_skin.run({"reviews": " ".join(bal_reviews)})
+    response_skin = chain_skin.invoke({"reviews": " ".join(bal_reviews)}).content
 
 # === 4️⃣ Display General Insights ===
 st.subheader("📈 Review Analysis Summary")
@@ -437,7 +346,6 @@ st.error(negative_section.group(1).strip() if negative_section else "Not found."
 st.subheader("🔑 Top Keywords")
 st.markdown(keywords_section.group(1).strip() if keywords_section else "Not found.")
 
-# === 5️⃣ NEW Subsection: Skin Profile–Segmented Analysis ===
+# === 5️⃣ Skin Profile–Segmented Analysis ===
 st.markdown("---")
-#st.subheader("🧬 Skin Profile–Segmented Insights")
 st.markdown(response_skin)
