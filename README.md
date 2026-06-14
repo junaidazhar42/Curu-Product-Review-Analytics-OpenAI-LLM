@@ -5,13 +5,26 @@ combining VADER sentiment analysis with GPT-3.5-turbo to surface actionable insi
 
 ## 📸 Screenshots
 
-| Output | Output |
-|---|---|
-| ![Output](images/opening_1.png) | ![Output](images/opening_2.png) |
+| Output (i) | 
+|---|
+| ![Output](images/opening_1.png) | 
 
-| Websites | Categories | Product List |
-|---|---|---|
-| ![Websites](images/websites.png) | ![Categories](images/categories.png) | ![Product List](images/product_list.png)
+| Output (ii) |
+|---|
+| ![Output](images/opening_2.png) |
+
+
+| Websites | 
+|---|
+| ![Websites](images/websites.png) | 
+
+| Categories |
+|---|
+| ![Categories](images/categories.png) | 
+
+| Product List |
+|---|
+| ![Product List](images/product_list.png)
 
 ---
 
@@ -152,13 +165,21 @@ This segmentation helps identify which customer profiles the product works best 
 ---
  
 ## Additional Screenshots
-| Landing Page | Sentiment Overview |
-|---|---|
-| ![Landing Page](images/ex_1.png) | ![Sentiment Overview](images/ex_2.png) |
+| Landing Page | 
+|---|
+| ![Landing Page](images/ex_1.png) | 
 
-| Insights & Keywords | Skin Types |
-|---|---|
-| ![Insights & Keywords](images/ex_3.png) | ![Skin Types](images/ex_4.png)
+| Sentiment Overview |
+|---|
+![Sentiment Overview](images/ex_2.png) |
+
+| Insights & Keywords | 
+|---|
+| ![Insights & Keywords](images/ex_3.png) | 
+
+| Skin Types |
+|---|
+![Skin Types](images/ex_4.png)
 
 | Skin Concerns |
 |---|
