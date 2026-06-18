@@ -3,6 +3,10 @@
 An NLP-powered dashboard that analyses thousands of skincare product reviews across four major Australian retailers (Amazon, Myer, Mecca and Chemist Warehouse), 
 combining VADER sentiment analysis with GPT-3.5-turbo to surface actionable insights segmented by skin type, sensitivity, and skin concerns.
 
+ **[▶ Try the live demo](https://huggingface.co/spaces/junaidazhar/Curu-Product-Review-Analytics-OpenAI-LLM)**
+
+ ---
+ 
 ## 📸 Screenshots
 
 | Output (i) | 
@@ -27,10 +31,6 @@ combining VADER sentiment analysis with GPT-3.5-turbo to surface actionable insi
 | ![Product List](images/product_list.png)
 
 ---
-
- **[▶ Try the live demo](https://huggingface.co/spaces/junaidazhar/Curu-Product-Review-Analytics-OpenAI-LLM)**
-
- ---
 
  ## Project Overview
  
